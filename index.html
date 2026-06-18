@@ -758,13 +758,21 @@ button {
 .section { padding: var(--space-xl) clamp(1.5rem, 6vw, 6rem); }
 
 .problem-thesis {
-  min-height: 80vh;
+  position: relative;
+  padding: 0 !important;
+  margin: 0;
+  height: 300vh;
+}
+
+.problem-thesis__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  padding-top: 2rem !important;
-  margin-top: -2rem;
+  padding: 2rem clamp(1.5rem, 6vw, 6rem);
+  background: var(--charcoal-dark);
 }
 
 .problem-thesis__split {
@@ -774,21 +782,39 @@ button {
   align-items: center;
   max-width: 1200px;
   width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 .problem-thesis__image {
   width: 100%;
   aspect-ratio: 16/9;
-  background-size: contain;
+  background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
   border-radius: 2px;
+  will-change: transform;
+  transform-origin: center center;
+  position: relative;
+}
+
+/* Fullscreen clone for the zoom — appears instantly at image pos, grows to fill viewport, then freezes */
+.problem-thesis__zoom-clone {
+  position: fixed;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 5;
+  pointer-events: none;
+  display: none;
+  will-change: width, height, top, left;
 }
 
 .problem-thesis__text-col {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  will-change: opacity;
 }
 
 .problem-thesis__text {
@@ -823,9 +849,19 @@ button {
 /* ========================================
    SECTION: SYSTEM TEASE
    ======================================== */
+/* All sections after problem-thesis scroll OVER the frozen photo */
+.system-tease,
+.projects,
+.stats-bar,
+.capabilities,
+.press,
+.footer {
+  position: relative;
+  z-index: 10;
+}
+
 .system-tease {
   background: var(--charcoal-dark);
-  position: relative;
 }
 
 .system-tease__inner {
@@ -836,7 +872,7 @@ button {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: clamp(2rem, 5vw, 5rem);
-  align-items: stretch;
+  align-items: center;
   max-width: 1200px;
   margin-bottom: var(--space-lg);
 }
@@ -1514,7 +1550,8 @@ button {
   border-radius: 6px;
 }
 
-.sistema-card:hover .sistema-card__logo {
+.sistema-card:hover .sistema-card__logo,
+.sistema-card__logo.logo-lit {
   opacity: 1;
   filter: grayscale(0%) brightness(1);
 }
@@ -1536,9 +1573,9 @@ button {
 }
 
 .sistema-card__desc {
-  font-family: var(--font-serif);
+  font-family: var(--font-primary);
   font-size: var(--body-lg);
-  font-style: italic;
+  font-style: normal;
   line-height: var(--line-normal);
   color: var(--gray);
 }
@@ -1713,6 +1750,9 @@ button {
   position: relative;
   overflow: hidden;
 }
+.parallax-section.problem-thesis {
+  overflow: visible;
+}
 
 .parallax-bg {
   position: absolute;
@@ -1761,6 +1801,10 @@ button {
 
   .sistema__grid {
     grid-template-columns: 1fr;
+  }
+  .sistema-card__logo {
+    opacity: 1;
+    filter: grayscale(0%) brightness(1);
   }
   .ecosystem-diagram { max-width: 320px; }
 
@@ -1888,15 +1932,15 @@ button {
     margin-bottom: var(--space-md);
   }
 
-  /* FIX 3: Press cards — show peek of next card */
+  /* FIX 3: Press cards — horizontal scroll driven */
   .press-card {
     min-width: 260px !important;
     max-width: 280px;
   }
   .press__grid {
-    padding-right: 15%;
-    mask-image: linear-gradient(to right, #000 80%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, #000 80%, transparent 100%);
+    padding-right: 0;
+    mask-image: none;
+    -webkit-mask-image: none;
   }
 
   /* FIX 4: Footer — compact on mobile */
@@ -1948,11 +1992,11 @@ button {
     aspect-ratio: 16/10 !important;
   }
 
-  /* FIX: Press/Noticias — remove fade, show peek of next card, photos in color */
+  /* FIX: Press/Noticias — horizontal scroll, photos in color on small screens */
   .press__grid {
     mask-image: none !important;
     -webkit-mask-image: none !important;
-    padding-right: 20% !important;
+    padding-right: 0 !important;
   }
   .press-card {
     min-width: 85vw !important;
@@ -2080,30 +2124,40 @@ button {
 .press {
   background: var(--charcoal);
   border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 0 !important;
+  overflow: visible;
+}
+
+.press__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-xl) clamp(1.5rem, 6vw, 6rem);
+  overflow: hidden;
+  background: var(--charcoal);
 }
 
 .press__grid {
   display: flex;
   gap: 1rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
   padding-bottom: var(--space-sm);
-  scrollbar-width: thin;
-  scrollbar-color: var(--red-conor) transparent;
-  max-width: 1400px;
+  will-change: transform;
 }
 
 .press__grid::-webkit-scrollbar {
-  height: 3px;
+  height: 0;
+  display: none;
 }
 
 .press__grid::-webkit-scrollbar-track {
-  background: rgba(255,255,255,0.04);
+  background: transparent;
 }
 
 .press__grid::-webkit-scrollbar-thumb {
-  background: var(--red-conor);
-  border-radius: 3px;
+  background: transparent;
 }
 
 .press-card {
@@ -2693,14 +2747,17 @@ button {
 </section>
 
 <!-- BLOCK 2: PROBLEM THESIS — 2 columnas: foto + texto -->
-<section class="section problem-thesis parallax-section" id="problem">
-  <div class="problem-thesis__split reveal">
-    <div class="problem-thesis__image" style="background-image:url('fotos-wix/foto 2.jpg');"></div>
-    <div class="problem-thesis__text-col">
-      <p class="problem-thesis__text" id="problemText" style="font-family:var(--font-primary);font-style:normal;text-align:left;font-size:clamp(1.8rem,4vw,3rem);font-weight:500;letter-spacing:var(--letter-tight);line-height:1.2;">La construcci&oacute;n es solo una parte del proceso. El verdadero valor de un proyecto se define mucho antes de que comience.</p>
-      <div class="problem-thesis__line" style="margin-left:0;"></div>
+<section class="problem-thesis parallax-section" id="problem">
+  <div class="problem-thesis__sticky">
+    <div class="problem-thesis__split reveal">
+      <div class="problem-thesis__image" style="background-image:url('foto crece.png');"></div>
+      <div class="problem-thesis__text-col">
+        <p class="problem-thesis__text" id="problemText" style="font-family:var(--font-primary);font-style:normal;text-align:left;font-size:clamp(1.8rem,4vw,3rem);font-weight:500;letter-spacing:var(--letter-tight);line-height:1.2;">La construcci&oacute;n es solo una parte del proceso. El verdadero valor de un proyecto se define mucho antes de que comience.</p>
+        <div class="problem-thesis__line" style="margin-left:0;"></div>
+      </div>
     </div>
   </div>
+  <div class="problem-thesis__zoom-clone" id="zoomClone" style="background-image:url('foto crece.png');"></div>
 </section>
 
 <!-- BLOCK 3: SYSTEM TEASE — texto + diagrama lado a lado -->
@@ -2711,7 +2768,7 @@ button {
       <div class="section-label reveal">El Sistema CONOR</div>
       <h2 class="system-tease__title reveal reveal-delay-1">No somos solo una constructora.<br>Somos un m&eacute;todo.</h2>
       <p class="system-tease__copy reveal reveal-delay-2">En 20 a&ntilde;os encontramos los mismos tres vac&iacute;os una y otra vez en el mercado inmobiliario. Construimos nuestras propias herramientas para cerrarlos. Hoy funcionan como El Sistema CONOR.</p>
-      <blockquote class="system-tease__quote reveal reveal-delay-3">&ldquo;El problema no es construir mal. Es decidir mal qu&eacute; construir.&rdquo;</blockquote>
+      <blockquote class="system-tease__quote reveal reveal-delay-3">&ldquo;Antes de construir bien, hay que decidir bien qu&eacute; construir.&rdquo;</blockquote>
     </div>
     <!-- Columna derecha: diagrama circular ecosistema -->
     <div class="system-tease__diagram reveal reveal-delay-2">
@@ -2722,7 +2779,7 @@ button {
   <!-- Cards del Sistema CONOR (5 integrantes) -->
   <div class="sistema__grid" style="margin-top:var(--space-lg);">
     <div class="sistema-card reveal">
-      <a href="https://cabesmaps.cl" target="_blank" rel="noopener" class="sistema-card__logo-link"><img src="logo-cabes-maps.png" alt="CABES Maps — Inteligencia inmobiliaria territorial Chile" class="sistema-card__logo"></a>
+      <a href="https://cabesmaps.cl" target="_blank" rel="noopener" class="sistema-card__logo-link"><img src="logo-cabes-maps.jpg" alt="CABES Maps — Inteligencia inmobiliaria territorial Chile" class="sistema-card__logo"></a>
       <div class="sistema-card__step">01</div>
       <div class="sistema-card__phase">Del mapa a la decisi&oacute;n</div>
       <h3 class="sistema-card__name">CABES Maps</h3>
@@ -2730,7 +2787,7 @@ button {
       <a href="https://cabesmaps.cl" target="_blank" rel="noopener" class="sistema-card__link">cabesmaps.cl &rarr;</a>
     </div>
     <div class="sistema-card reveal reveal-delay-1">
-      <a href="https://cabes.cl" target="_blank" rel="noopener" class="sistema-card__logo-link"><img src="LOGO CABES.jpg" alt="CABES by CONOR — Plataforma de c&aacute;lculo de cabida inmobiliaria" class="sistema-card__logo"></a>
+      <a href="https://cabes.cl" target="_blank" rel="noopener" class="sistema-card__logo-link"><img src="LOGO CABES.png" alt="CABES by CONOR — Plataforma de c&aacute;lculo de cabida inmobiliaria" class="sistema-card__logo"></a>
       <div class="sistema-card__step">02</div>
       <div class="sistema-card__phase">C&aacute;lculo de Cabida</div>
       <h3 class="sistema-card__name">CABES by CONOR</h3>
@@ -2954,7 +3011,8 @@ button {
 </a>
 
 <!-- BLOCK 7B: PRESS / NOTICIAS (2da página más visitada en GA) -->
-<section class="section press" id="press">
+<section class="press" id="press">
+  <div class="press__sticky">
   <div class="section-label reveal">Noticias &amp; Reconocimientos</div>
   <h2 class="section-title reveal reveal-delay-1" style="color:var(--white)">Trayectoria en los medios.</h2>
   <div class="press__grid reveal">
@@ -3058,6 +3116,7 @@ button {
       </div>
     </div>
   </div>
+  </div><!-- /press__sticky -->
 </section>
 
 <!-- PRESS MODAL -->
@@ -3399,33 +3458,228 @@ function initHeroAnimation() {
 })();
 
 /* ========================================
-   TEXT REVEAL: PROBLEM THESIS
+   PROBLEM THESIS — SCROLL-DRIVEN
+   Phase 1: Words reveal one-by-one as you scroll
+   Phase 2: Photo grows to fullscreen, then freezes
+   Sections below scroll over the frozen photo.
    ======================================== */
 (function() {
-  const textEl = document.getElementById('problemText');
-  const rawText = textEl.textContent.trim();
-  textEl.innerHTML = '';
+  var section = document.getElementById('problem');
+  if (!section) return;
+  var textEl = document.getElementById('problemText');
+  var imageEl = section.querySelector('.problem-thesis__image');
+  var textCol = section.querySelector('.problem-thesis__text-col');
+  var line = section.querySelector('.problem-thesis__line');
+  var clone = document.getElementById('zoomClone');
 
-  rawText.split(' ').forEach((word, i) => {
-    const span = document.createElement('span');
+  /* --- Split text into word spans --- */
+  var rawText = textEl.textContent.trim();
+  textEl.innerHTML = '';
+  rawText.split(' ').forEach(function(word) {
+    var span = document.createElement('span');
     span.className = 'word-reveal';
     span.textContent = word + ' ';
     textEl.appendChild(span);
   });
+  var words = textEl.querySelectorAll('.word-reveal');
+  var totalWords = words.length;
 
-  const words = textEl.querySelectorAll('.word-reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        words.forEach((w, i) => {
-          setTimeout(() => w.classList.add('lit'), i * 80);
-        });
-        observer.unobserve(entry.target);
+  function onScroll() {
+    var rect = section.getBoundingClientRect();
+    var vh = window.innerHeight;
+    var vw = window.innerWidth;
+    var sectionH = section.offsetHeight;
+
+    /* Only run while section is in sticky range */
+    if (rect.top > 0 || rect.bottom <= vh) {
+      /* Before or after — reset */
+      if (rect.top > 0) {
+        words.forEach(function(w) { w.classList.remove('lit'); });
+        clone.style.display = 'none';
+        imageEl.style.visibility = 'visible';
+        textCol.style.opacity = 1;
+        if (line) line.style.opacity = 1;
+      }
+      return;
+    }
+
+    /* scrolled = how many px we've scrolled since section top hit viewport top */
+    var scrolled = -rect.top;
+    var totalScroll = sectionH - vh;
+
+    /* ---- PHASE 1: Word reveal (first 50% of scroll) ---- */
+    var phase1End = totalScroll * 0.45;
+    var wordProgress = Math.min(1, scrolled / phase1End);
+
+    /* Light up words proportionally to scroll */
+    var wordsToShow = Math.floor(wordProgress * totalWords);
+    words.forEach(function(w, i) {
+      if (i < wordsToShow) {
+        w.classList.add('lit');
+      } else {
+        w.classList.remove('lit');
       }
     });
-  }, { threshold: 0.3 });
 
-  observer.observe(textEl);
+    /* ---- PHASE 2: Photo zoom (50% to 90% of scroll) ---- */
+    var phase2Start = totalScroll * 0.50;
+    var phase2End = totalScroll * 0.85;
+
+    if (scrolled >= phase2Start) {
+      var zp = (scrolled - phase2Start) / (phase2End - phase2Start);
+      zp = Math.min(1, Math.max(0, zp));
+      /* ease-out cubic */
+      var ease = 1 - Math.pow(1 - zp, 3);
+
+      var imgRect = imageEl.getBoundingClientRect();
+
+      /* Interpolate from image position to full viewport */
+      var curW = imgRect.width + (vw - imgRect.width) * ease;
+      var curH = imgRect.height + (vh - imgRect.height) * ease;
+      var curX = imgRect.left + (0 - imgRect.left) * ease;
+      var curY = imgRect.top + (0 - imgRect.top) * ease;
+
+      clone.style.width = curW + 'px';
+      clone.style.height = curH + 'px';
+      clone.style.left = curX + 'px';
+      clone.style.top = curY + 'px';
+      clone.style.opacity = '1';
+      clone.style.borderRadius = Math.round(2 * (1 - ease)) + 'px';
+      clone.style.display = 'block';
+
+      imageEl.style.visibility = 'hidden';
+
+      /* Fade text and line as photo grows */
+      var textOp = Math.max(0, 1 - zp * 2.5);
+      textCol.style.opacity = textOp;
+      if (line) line.style.opacity = textOp;
+
+      /* Lock to fullscreen once complete */
+      if (zp >= 1) {
+        clone.style.width = '100vw';
+        clone.style.height = '100vh';
+        clone.style.left = '0';
+        clone.style.top = '0';
+        clone.style.borderRadius = '0';
+      }
+    } else {
+      /* Phase 1 still active — no zoom yet */
+      clone.style.display = 'none';
+      imageEl.style.visibility = 'visible';
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  onScroll();
+})();
+
+/* ========================================
+   LOGO SEQUENTIAL LIGHT-UP
+   When "El Sistema CONOR / No somos solo una"
+   scrolls out of view, logos light up 1-by-1
+   from left to right, 1s each.
+   ======================================== */
+(function() {
+  var title = document.querySelector('.system-tease__title');
+  var logos = document.querySelectorAll('.sistema-card__logo');
+  if (!title || !logos.length) return;
+
+  var animRunning = false;
+  var animDone = false;
+  var timeouts = [];
+
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (!entry.isIntersecting && !animDone) {
+        /* Title scrolled out of view — start sequential animation */
+        if (animRunning) return;
+        animRunning = true;
+
+        logos.forEach(function(logo, i) {
+          /* Turn ON after i seconds */
+          timeouts.push(setTimeout(function() {
+            logo.classList.add('logo-lit');
+          }, i * 800));
+
+          /* Turn OFF after (i+1) seconds */
+          timeouts.push(setTimeout(function() {
+            logo.classList.remove('logo-lit');
+          }, (i + 1) * 800));
+        });
+
+        /* After full sequence, mark done and reset */
+        timeouts.push(setTimeout(function() {
+          animRunning = false;
+          animDone = true;
+        }, logos.length * 800));
+
+      } else if (entry.isIntersecting) {
+        /* Title back in view — cancel and reset so it can play again */
+        timeouts.forEach(clearTimeout);
+        timeouts = [];
+        logos.forEach(function(l) { l.classList.remove('logo-lit'); });
+        animRunning = false;
+        animDone = false;
+      }
+    });
+  }, { threshold: 0 });
+
+  obs.observe(title);
+})();
+
+/* ========================================
+   HORIZONTAL SCROLL — PRESS / NOTICIAS
+   ======================================== */
+(function() {
+  var pressSection = document.getElementById('press');
+  if (!pressSection) return;
+  var sticky = pressSection.querySelector('.press__sticky');
+  var grid = pressSection.querySelector('.press__grid');
+  if (!sticky || !grid) return;
+
+  function setup() {
+    var vw = window.innerWidth;
+    var gridW = grid.scrollWidth;
+    var overflow = gridW - (vw - parseFloat(getComputedStyle(sticky).paddingLeft) - parseFloat(getComputedStyle(sticky).paddingRight));
+    if (overflow < 0) overflow = 0;
+
+    // Section height = 100vh (visible) + overflow scroll distance
+    var extraScroll = overflow;
+    pressSection.style.height = (window.innerHeight + extraScroll) + 'px';
+
+    return { overflow: overflow, extraScroll: extraScroll };
+  }
+
+  var dims = setup();
+
+  function onScroll() {
+    var rect = pressSection.getBoundingClientRect();
+    var vh = window.innerHeight;
+
+    // Not in view yet or past
+    if (rect.top > 0 || rect.bottom <= vh) {
+      if (rect.top > 0) {
+        grid.style.transform = 'translateX(0)';
+      }
+      return;
+    }
+
+    var scrolled = -rect.top;
+    var totalScroll = pressSection.offsetHeight - vh;
+    if (totalScroll <= 0) return;
+
+    var progress = Math.min(1, Math.max(0, scrolled / totalScroll));
+    var translateX = -progress * dims.overflow;
+    grid.style.transform = 'translateX(' + translateX + 'px)';
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', function() {
+    dims = setup();
+    onScroll();
+  }, { passive: true });
+  onScroll();
 })();
 
 /* ========================================
@@ -3479,6 +3733,12 @@ function initHeroAnimation() {
         var scrollY = window.scrollY;
         var heroHeight = heroSection.offsetHeight - window.innerHeight;
         if (heroHeight <= 0 || !heroVideo.duration) { ticking = false; return; }
+        /* When at top (e.g. after clicking Home), reset to frame 0 */
+        if (scrollY < 5) {
+          heroVideo.currentTime = 0;
+          ticking = false;
+          return;
+        }
         var progress = Math.min(Math.max(scrollY / heroHeight, 0), 1);
         /* Start from 40% (where lock phase ended) up to 100% */
         heroVideo.currentTime = (0.4 + progress * 0.6) * heroVideo.duration;
@@ -3667,6 +3927,15 @@ document.addEventListener('keydown', function(e) {
   var HERO_LOCK_LIMIT = 350; // pixels of wheel delta before releasing
   var heroVid = document.getElementById('heroVideo');
   if (heroVid) { heroVid.pause(); heroVid.currentTime = 0; }
+
+  // Reset video lock when clicking Home nav links
+  document.querySelectorAll('a[href="#home"]').forEach(function(link) {
+    link.addEventListener('click', function() {
+      heroVideoLocked = true;
+      heroLockedAmount = 0;
+      if (heroVid) heroVid.currentTime = 0;
+    });
+  });
 
   // Capture wheel events
   window.addEventListener('wheel', function(e) {
@@ -3870,8 +4139,8 @@ document.addEventListener('keydown', function(e) {
       'In 20 years we found the same three gaps over and over in real estate. We built our own tools to close them. Today they work as The CONOR System.'
     );
     t('.system-tease__quote',
-      '"El problema no es construir mal. Es decidir mal qué construir."',
-      "The problem isn't building poorly. It's deciding poorly what to build."
+      '“Antes de construir bien, hay que decidir bien qué construir.”',
+      '“Before building well, you must decide well what to build.”'
     );
 
     // ===== ECOSYSTEM CARDS (5) =====
