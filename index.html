@@ -3496,9 +3496,19 @@ function initHeroAnimation() {
       if (rect.top > 0) {
         words.forEach(function(w) { w.classList.remove('lit'); });
         clone.style.display = 'none';
+        clone.style.backgroundImage = "url('foto crece.png')";
         imageEl.style.visibility = 'visible';
         textCol.style.opacity = 1;
         if (line) line.style.opacity = 1;
+      }
+      if (rect.bottom <= vh) {
+        /* After section — clone stays fullscreen, swap to FONDO 3 */
+        var pressEl = document.getElementById('press');
+        if (pressEl && pressEl.getBoundingClientRect().top < vh) {
+          clone.style.backgroundImage = "url('FONDO 3.png')";
+        } else {
+          clone.style.backgroundImage = "url('foto crece.png')";
+        }
       }
       return;
     }
@@ -3563,16 +3573,6 @@ function initHeroAnimation() {
         clone.style.borderRadius = '0';
       }
 
-      /* Swap to FONDO 3 only when scrolled past the press section */
-      var pressEl = document.getElementById('press');
-      if (pressEl) {
-        var pressRect = pressEl.getBoundingClientRect();
-        if (pressRect.top < vh) {
-          clone.style.backgroundImage = "url('FONDO 3.png')";
-        } else {
-          clone.style.backgroundImage = "url('foto crece.png')";
-        }
-      }
     } else {
       /* Phase 1 still active — no zoom yet */
       clone.style.display = 'none';
