@@ -2,3 +2,7 @@ User-agent: *
 Allow: /
 
 Sitemap: https://www.conor.cl/sitemap.xml
+
+# AI/LLM context file
+# See https://llmstxt.org
+LLMs-Txt: https://www.conor.cl/llms.txt
