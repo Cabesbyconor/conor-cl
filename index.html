@@ -3138,6 +3138,11 @@ button {
     <p class="contact-modal__subtitle" data-i18n="contact-subtitle">Completa el formulario y nuestro equipo te contactará en menos de 48 horas.</p>
 
     <form class="contact-form" id="contactForm" onsubmit="submitContactForm(event)">
+      <!-- FormSubmit config (hidden fields sent via JSON) -->
+      <input type="hidden" name="_subject" value="Nueva consulta desde conor.cl">
+      <input type="hidden" name="_template" value="table">
+      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+      <input type="hidden" name="_captcha" value="false">
       <div class="contact-form__row">
         <div class="contact-form__field">
           <label data-i18n="form-name">Nombre</label>
@@ -3871,14 +3876,65 @@ function closeContactModal(e) {
 
 function submitContactForm(e) {
   e.preventDefault();
-  // Simulate submission (replace with real endpoint later)
   var form = document.getElementById('contactForm');
+  var btn = form.querySelector('.contact-form__submit');
+  var originalText = btn.textContent;
+
+  /* Disable button & show loading state */
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+  btn.style.opacity = '0.6';
+
   var formData = new FormData(form);
-  // Log data for now
-  console.log('Contact form submitted:', Object.fromEntries(formData));
-  // Show success state
-  form.style.display = 'none';
-  document.getElementById('contactSuccess').classList.add('active');
+
+  fetch('https://formsubmit.co/ajax/proyectos@conor.cl', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(Object.fromEntries(formData))
+  })
+  .then(function(response) { return response.json(); })
+  .then(function(data) {
+    if (data.success === 'true' || data.success === true) {
+      /* Show success state */
+      form.style.display = 'none';
+      document.getElementById('contactSuccess').classList.add('active');
+      /* GA4 event for conversion tracking */
+      if (typeof gtag === 'function') {
+        gtag('event', 'generate_lead', {
+          event_category: 'contact',
+          event_label: formData.get('project_type') || 'general',
+          value: 1
+        });
+      }
+    } else {
+      throw new Error('FormSubmit error');
+    }
+  })
+  .catch(function() {
+    /* Fallback: open mailto with form data pre-filled */
+    var name = formData.get('name') || '';
+    var email = formData.get('email') || '';
+    var type = formData.get('project_type') || '';
+    var location = formData.get('location') || '';
+    var message = formData.get('message') || '';
+    var subject = encodeURIComponent('Consulta web CONOR — ' + type);
+    var body = encodeURIComponent(
+      'Nombre: ' + name + '\n' +
+      'Email: ' + email + '\n' +
+      'Tipo: ' + type + '\n' +
+      'Ubicación: ' + location + '\n\n' +
+      'Mensaje:\n' + message
+    );
+    window.location.href = 'mailto:proyectos@conor.cl?subject=' + subject + '&body=' + body;
+    /* Still show success since mailto opened */
+    form.style.display = 'none';
+    document.getElementById('contactSuccess').classList.add('active');
+  })
+  .finally(function() {
+    btn.disabled = false;
+    btn.textContent = originalText;
+    btn.style.opacity = '';
+  });
 }
 
 document.addEventListener('keydown', function(e) {
