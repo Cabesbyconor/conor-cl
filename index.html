@@ -3138,11 +3138,8 @@ button {
     <p class="contact-modal__subtitle" data-i18n="contact-subtitle">Completa el formulario y nuestro equipo te contactará en menos de 48 horas.</p>
 
     <form class="contact-form" id="contactForm" onsubmit="submitContactForm(event)">
-      <!-- FormSubmit config (hidden fields sent via JSON) -->
-      <input type="hidden" name="_subject" value="Nueva consulta desde conor.cl">
-      <input type="hidden" name="_template" value="table">
+      <!-- Honeypot anti-spam (hidden from humans, bots fill it) -->
       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
-      <input type="hidden" name="_captcha" value="false">
       <div class="contact-form__row">
         <div class="contact-form__field">
           <label data-i18n="form-name">Nombre</label>
@@ -3887,14 +3884,17 @@ function submitContactForm(e) {
 
   var formData = new FormData(form);
 
-  fetch('https://formsubmit.co/ajax/proyectos@conor.cl', {
+  fetch('/api/contact', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
     body: JSON.stringify(Object.fromEntries(formData))
   })
-  .then(function(response) { return response.json(); })
+  .then(function(response) {
+    if (!response.ok) throw new Error('Server error ' + response.status);
+    return response.json();
+  })
   .then(function(data) {
-    if (data.success === 'true' || data.success === true) {
+    if (data.success) {
       /* Show success state */
       form.style.display = 'none';
       document.getElementById('contactSuccess').classList.add('active');
