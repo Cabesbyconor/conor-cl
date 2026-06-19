@@ -3561,9 +3561,17 @@ function initHeroAnimation() {
         clone.style.left = '0';
         clone.style.top = '0';
         clone.style.borderRadius = '0';
-        clone.style.backgroundImage = "url('FONDO 3.png')";
-      } else {
-        clone.style.backgroundImage = "url('foto crece.png')";
+      }
+
+      /* Swap to FONDO 3 only when scrolled past the press section */
+      var pressEl = document.getElementById('press');
+      if (pressEl) {
+        var pressRect = pressEl.getBoundingClientRect();
+        if (pressRect.top < vh) {
+          clone.style.backgroundImage = "url('FONDO 3.png')";
+        } else {
+          clone.style.backgroundImage = "url('foto crece.png')";
+        }
       }
     } else {
       /* Phase 1 still active — no zoom yet */
