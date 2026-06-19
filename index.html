@@ -2757,7 +2757,7 @@ button {
       </div>
     </div>
   </div>
-  <div class="problem-thesis__zoom-clone" id="zoomClone" style="background-image:url('FONDO 3.png');"></div>
+  <div class="problem-thesis__zoom-clone" id="zoomClone" style="background-image:url('foto crece.png');"></div>
 </section>
 
 <!-- BLOCK 3: SYSTEM TEASE — texto + diagrama lado a lado -->
@@ -3561,6 +3561,9 @@ function initHeroAnimation() {
         clone.style.left = '0';
         clone.style.top = '0';
         clone.style.borderRadius = '0';
+        clone.style.backgroundImage = "url('FONDO 3.png')";
+      } else {
+        clone.style.backgroundImage = "url('foto crece.png')";
       }
     } else {
       /* Phase 1 still active — no zoom yet */
